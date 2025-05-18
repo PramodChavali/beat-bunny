@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class playerMovement : MonoBehaviour
 {
     [SerializeField] private spawnNotes noteSpawner;
 	[SerializeField] private setUpQuestions setUpQuestions;
-    private int currentNoteIndex = 1;
+	[SerializeField] private playMetronome metronome;
+	[SerializeField] private GameObject beatDisplay;
+	private int currentNoteIndex = 1;
 	[SerializeField] private float playerMoveSpeed = 1f;
 	private Vector2 newPlayerPos;
 	public event EventHandler OnPlayerJump;
@@ -32,68 +35,102 @@ public class playerMovement : MonoBehaviour
 		{
 			if (answerArray[0] == "1" && (KeyCode) key == KeyCode.Alpha1 || answerArray[0] == "2" && (KeyCode) key == KeyCode.Alpha2)//if the right answer is pressed
 			{
-				//player jumps
-				int nextNoteIndex = currentNoteIndex + 1;
 
-				while (true)
+				//check if player jumped too early
+				float correctJumpBeat = noteSpawner.notesToRender[GetCurrentNoteIndex()].GetComponent<noteScript>().GetNoteDuration(noteSpawner.notesToRender[GetCurrentNoteIndex()].GetComponent<noteScript>().GetNoteType());
+				correctJumpBeat++;
+				float[] validJumpBeats = {correctJumpBeat - 0.5f, correctJumpBeat};
+
+				Debug.Log(correctJumpBeat.ToString() + " is the correct beat");
+				if (validJumpBeats[0] == metronome.beatInBar || validJumpBeats[1] == metronome.beatInBar)
 				{
-					if (noteSpawner.notesToRender[nextNoteIndex].GetComponent<noteScript>().GetNoteType() != "barline")
+					//player jumps
+					int nextNoteIndex = currentNoteIndex + 1;
+					//gets the next place to set the playerpos to
+					while (true)
 					{
-						newPlayerPos = noteSpawner.notesToRender[nextNoteIndex].GetComponent<noteScript>().GetPlayerPoint().transform.position;
+						if (noteSpawner.notesToRender[nextNoteIndex].GetComponent<noteScript>().GetNoteType() != "barline")
+						{
+							newPlayerPos = noteSpawner.notesToRender[nextNoteIndex].GetComponent<noteScript>().GetPlayerPoint().transform.position;
 
-						break;
-					}
-					else
-					{
-						nextNoteIndex += 1;
+							break;
+						}
+						else
+						{
+							nextNoteIndex += 1;
+						}
+
 					}
 
+					//transform.position = Vector2.Lerp(playerPos, newNotePos, playerMoveSpeed * Time.deltaTime);
+					currentNoteIndex++;
+					//transform.position = newPlayerPos;
+					//position changed! FIRE THE EVENTTT
+					OnPlayerJump?.Invoke(this, EventArgs.Empty);
 				}
-
-				//transform.position = Vector2.Lerp(playerPos, newNotePos, playerMoveSpeed * Time.deltaTime);
-				currentNoteIndex++;
-				//transform.position = newPlayerPos;
-				//position changed! FIRE THE EVENTTT
-				OnPlayerJump?.Invoke(this, EventArgs.Empty);
+				else
+				{
+					noteSpawner.EndGame(false);
+				}
 			}
-			else
+			else //player jumped at the wrong time
 			{
-				noteSpawner.moveSpeed = 0f; //stop the game
+				noteSpawner.EndGame(false);
+
 			}
+				
 		}
 		else if (answerArray[1] == "amongus")//note question
 		{
 			string keyNeeded = answerArray[0];
+			Debug.Log(keyNeeded);
+			
 			KeyCode answer = (KeyCode)System.Enum.Parse(typeof(KeyCode), keyNeeded);
 
 			if ((KeyCode) key == answer)//they got the right answer
 			{
-				//player jumps
-				int nextNoteIndex = currentNoteIndex + 1;
+				//check if player jumped too early
+				float correctJumpBeat = noteSpawner.notesToRender[GetCurrentNoteIndex()].GetComponent<noteScript>().GetNoteDuration(noteSpawner.notesToRender[GetCurrentNoteIndex()].GetComponent<noteScript>().GetNoteType());
+				correctJumpBeat++;
+				float[] validJumpBeats = { correctJumpBeat - 0.5f, correctJumpBeat };
 
-				while (true)
+				Debug.Log(correctJumpBeat.ToString() + " is the correct beat");
+				if (validJumpBeats[0] == metronome.beatInBar || validJumpBeats[1] == metronome.beatInBar)
+					if (correctJumpBeat == metronome.beatInBar)
 				{
-					if (noteSpawner.notesToRender[nextNoteIndex].GetComponent<noteScript>().GetNoteType() != "barline")
+					//player jumps
+					int nextNoteIndex = currentNoteIndex + 1;
+					//gets the next place to set the playerpos to
+					while (true)
 					{
-						newPlayerPos = noteSpawner.notesToRender[nextNoteIndex].GetComponent<noteScript>().GetPlayerPoint().transform.position;
+						if (noteSpawner.notesToRender[nextNoteIndex].GetComponent<noteScript>().GetNoteType() != "barline")
+						{
+							newPlayerPos = noteSpawner.notesToRender[nextNoteIndex].GetComponent<noteScript>().GetPlayerPoint().transform.position;
 
-						break;
+							break;
+						}
+						else
+						{
+							nextNoteIndex += 1;
+						}
+
 					}
-					else
-					{
-						nextNoteIndex += 1;
-					}
+
+					//transform.position = Vector2.Lerp(playerPos, newNotePos, playerMoveSpeed * Time.deltaTime);
+					currentNoteIndex++;
+					//transform.position = newPlayerPos;
+					//position changed! FIRE THE EVENTTT
+					OnPlayerJump?.Invoke(this, EventArgs.Empty);
 				}
-
-				//transform.position = Vector2.Lerp(playerPos, newPlayerPos, playerMoveSpeed * Time.deltaTime);
-				//position changed! FIRE THE EVENTTT
-				currentNoteIndex++;
-				//transform.position = newPlayerPos;
-				OnPlayerJump?.Invoke(this, EventArgs.Empty);
+				else
+				{
+					noteSpawner.EndGame(false);
+				}
 			}
-			else
+			else //player jumped at the wrong time
 			{
-				noteSpawner.moveSpeed = 0f; //stop the game
+				noteSpawner.EndGame(false);
+
 			}
 		}
 	}
@@ -109,6 +146,8 @@ public class playerMovement : MonoBehaviour
 	{
 		playerPos = noteSpawner.notesToRender[currentNoteIndex].GetComponent<noteScript>().GetPlayerPoint().transform.position;
 		transform.position = playerPos;
+
+		beatDisplay.GetComponentInChildren<TextMeshProUGUI>().GetComponentInChildren<TextMeshProUGUI>().text = ((int) metronome.beatInBar).ToString();
 
 		foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
 		{

@@ -7,6 +7,7 @@ public class noteList : MonoBehaviour
 	private int numHalfSteps;//                     0     1             2      3         4        5        6          7      8          9       10     11         12      13        14     15       16       17
 	private string[] allNotesInHalfSteps = {"D4", "D#4", "E4", "F4", "F#4", "G4", "G#4", "A4", "A#4", "B4", "C5", "C#5", "D5", "D#5", "E5", "F5", "F#5", "G5"};
 
+
 	public float GetHeightFromPitch(string pitch)
 	{
 		switch (pitch)

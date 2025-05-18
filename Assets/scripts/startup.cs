@@ -2,10 +2,14 @@ using UnityEngine;
 
 public class startup : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+
+    [SerializeField] private GameObject[] background;
+    void Awake()
     {
-        
+        foreach (GameObject go in background)
+        {
+            go.SetActive(true);
+        }
     }
 
     // Update is called once per frame

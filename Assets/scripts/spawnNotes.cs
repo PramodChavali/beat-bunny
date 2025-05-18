@@ -1,18 +1,21 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class spawnNotes : MonoBehaviour
 {
 	[SerializeField] private noteList pitchToHeight;
+	[SerializeField] private playMetronome metronome;
 	[SerializeField] private GameObject quarterNote;
 	[SerializeField] private GameObject halfNote;
 	[SerializeField] private GameObject wholeNote;
 	[SerializeField] private GameObject barline;
-	[SerializeField] public float moveSpeed;
+	[SerializeField] float moveSpeed;
 	[SerializeField] private GameObject trebleClef;
-
+	[SerializeField] private playerMovement player;
+	[SerializeField] private GameObject winLoseBanner;
 
 	private string[] noteNames = { "D4", "E4", "F4", "G4", "A4", "B4", "C5", "D5", "E5", "F5", "G5" };
 	private float[] durationList = {1f, 2f, 4f};
@@ -27,10 +30,17 @@ public class spawnNotes : MonoBehaviour
 	private bool barlined = false;
 	private int index = 0;
 
+
+	public bool gameRunning = false;
+	private bool win = false;
+
+
+
+
 	private void Awake()
 	{
 
-
+		winLoseBanner.gameObject.SetActive(false);
 		while (totalBeats < 256f) //pregen the notes and then draw them as the player is playing
 		{
 			List<object> staffObjInfo = new List<object>();
@@ -72,7 +82,8 @@ public class spawnNotes : MonoBehaviour
 				{
 					noteDuration = durationList[UnityEngine.Random.Range(0, 3)];
 				}
-				
+
+
 				staffObjInfo.Add("note");
 				staffObjInfo.Add(xPos);
 				staffObjInfo.Add(noteHeight);
@@ -106,6 +117,7 @@ public class spawnNotes : MonoBehaviour
 				staffObj.GetComponent<noteScript>().SetNoteType(noteDuration);
 				staffObj.GetComponent<noteScript>().SetIndex(index);
 				staffObj.GetComponent<noteScript>().SetPitch(pitch);
+				
 
 				notesToRender.Add(staffObj);
 
@@ -116,28 +128,64 @@ public class spawnNotes : MonoBehaviour
 				index++;
 			}
 		}
+		
 	}
 
 	private void Update()
 	{
-		for (int i = 0; i < notesToRender.Count; i++)
+
+		if (gameRunning == true)
 		{
-			if (notesToRender[i].transform.position.x >= -7f && notesToRender[i].transform.position.x <= 15f)
+			Debug.Log("game is running!");
+			for (int i = 0; i < notesToRender.Count; i++)
 			{
-				notesToRender[i].GetComponent<noteScript>().ShowNoteVisual();
+				moveSpeed = notesToRender[player.GetCurrentNoteIndex()].GetComponent<noteScript>().GetMoveSpeed(metronome.secondsPerBeat, notesToRender[player.GetCurrentNoteIndex()].GetComponent<noteScript>().GetNoteType());
+
+				if (notesToRender[i].transform.position.x >= -7f && notesToRender[i].transform.position.x <= 15f)//note is on the screen
+				{
+					notesToRender[i].GetComponent<noteScript>().ShowNoteVisual();
+				}
+				if (notesToRender[i].transform.position.x >= -7f)//if note is on screen or off screen to the right
+				{
+
+					notesToRender[player.GetCurrentNoteIndex()].GetComponent<noteScript>().SetSpeedCalculated(true);
+					Vector2 newPos = notesToRender[i].transform.position;
+					newPos.x -= moveSpeed * Time.deltaTime;
+
+					notesToRender[i].transform.position = newPos;
+
+
+				}
+				else
+				{
+					if (notesToRender[i] == notesToRender[player.GetCurrentNoteIndex()])
+					{
+						gameRunning = false;
+					}
+					notesToRender[i].GetComponent<noteScript>().HideNoteVisual();
+				}
 
 			}
-			if (notesToRender[i].transform.position.x >= -7f)
-			{ 
-				position = notesToRender[i].transform.position;
-				position.x -= moveSpeed * Time.deltaTime;
-				notesToRender[i].transform.position = position;
+		}
+		else
+		{
+			if (win == false)
+			{
+				winLoseBanner.GetComponentInChildren<TextMeshProUGUI>().text = "you lose :(";
+				winLoseBanner.gameObject.SetActive(true);
 			}
 			else
 			{
-				notesToRender[i].GetComponent <noteScript>().HideNoteVisual();
+				winLoseBanner.GetComponentInChildren<TextMeshProUGUI>().text = "you win :)";
+				winLoseBanner.gameObject.SetActive(true);
 			}
-		}	
+		}
+	}
+
+	public void EndGame(bool win)
+	{
+		this.win = win;
+		gameRunning = false;
 	}
 }
 

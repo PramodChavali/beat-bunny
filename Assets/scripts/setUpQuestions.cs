@@ -94,34 +94,12 @@ public class setUpQuestions : MonoBehaviour
 			noteBox.SetActive(true); //question is already pretyped in the editor
 
             //gets the note after the one the player is currently on
-            string nextNote = noteSpawner.notesToRender[player.GetNextNoteIndex(player.GetCurrentNoteIndex())].GetComponent<noteScript>().GetPitch();
+            string nextPitch = noteSpawner.notesToRender[player.GetNextNoteIndex(player.GetCurrentNoteIndex())].GetComponent<noteScript>().GetPitch();
 
-            nextNote.Remove(1);
+            string nextNote = nextPitch.Remove(1, 1);
+            Debug.Log(nextNote + " is the next note");
 
-            switch (nextNote)
-            {
-                case "C":
-                    nextNote = KeyCode.C.ToString();
-                    break;
-                case "D":
-                    nextNote = KeyCode.D.ToString();
-                    break;
-                case "E":
-                    nextNote = KeyCode.E.ToString();
-                    break;
-                case "F":
-                    nextNote = KeyCode.F.ToString();
-                    break;
-                case "G":
-                    nextNote = KeyCode.G.ToString();
-                    break;
-                case "A":
-                    nextNote = KeyCode.A.ToString();
-                    break;
-                case "B":
-                    nextNote = KeyCode.B.ToString();
-                    break;
-            }
+            
 
             returnList[0] = nextNote;
 			returnList[1] = "amongus";
