@@ -41,7 +41,7 @@ public class spawnNotes : MonoBehaviour
 	{
 
 		winLoseBanner.gameObject.SetActive(false);
-		while (totalBeats < 256f) //pregen the notes and then draw them as the player is playing
+		while (totalBeats < 8f) //pregen the notes and then draw them as the player is playing
 		{
 			List<object> staffObjInfo = new List<object>();
 			if (totalBeats % 4 == 0 && barlined == false)
@@ -133,23 +133,29 @@ public class spawnNotes : MonoBehaviour
 
 	private void Update()
 	{
+		RunGame(gameRunning);
+	}
 
+	public void EndGame(bool win)
+	{
+		this.win = win;
+		gameRunning = false;
+	}
+
+	public void RunGame(bool gameRunning)
+	{
 		if (gameRunning == true)
 		{
-			Debug.Log("game is running!");
 			for (int i = 0; i < notesToRender.Count; i++)
 			{
-				moveSpeed = notesToRender[player.GetCurrentNoteIndex()].GetComponent<noteScript>().GetMoveSpeed(metronome.secondsPerBeat, notesToRender[player.GetCurrentNoteIndex()].GetComponent<noteScript>().GetNoteType());
-
 				if (notesToRender[i].transform.position.x >= -7f && notesToRender[i].transform.position.x <= 15f)//note is on the screen
 				{
 					notesToRender[i].GetComponent<noteScript>().ShowNoteVisual();
 				}
 				if (notesToRender[i].transform.position.x >= -7f)//if note is on screen or off screen to the right
 				{
-
-					notesToRender[player.GetCurrentNoteIndex()].GetComponent<noteScript>().SetSpeedCalculated(true);
-					Vector2 newPos = notesToRender[i].transform.position;
+					moveSpeed = notesToRender[player.GetCurrentNoteIndex()].GetComponent<noteScript>().GetMoveSpeed(metronome.secondsPerBeat, notesToRender[player.GetCurrentNoteIndex()].GetComponent<noteScript>().GetNoteType());
+					Vector3 newPos = notesToRender[i].transform.position;
 					newPos.x -= moveSpeed * Time.deltaTime;
 
 					notesToRender[i].transform.position = newPos;
@@ -158,10 +164,7 @@ public class spawnNotes : MonoBehaviour
 				}
 				else
 				{
-					if (notesToRender[i] == notesToRender[player.GetCurrentNoteIndex()])
-					{
-						gameRunning = false;
-					}
+					
 					notesToRender[i].GetComponent<noteScript>().HideNoteVisual();
 				}
 
@@ -180,12 +183,6 @@ public class spawnNotes : MonoBehaviour
 				winLoseBanner.gameObject.SetActive(true);
 			}
 		}
-	}
-
-	public void EndGame(bool win)
-	{
-		this.win = win;
-		gameRunning = false;
 	}
 }
 

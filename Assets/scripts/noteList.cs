@@ -35,7 +35,7 @@ public class noteList : MonoBehaviour
 			case "G5":
 				return 5f;
 			default:
-				return -100f;
+				return 0f;
 		}
 	}
 	public string GetInterval(string pitch1, string pitch2)
@@ -43,8 +43,6 @@ public class noteList : MonoBehaviour
 		int indexPitch1 = Array.IndexOf(allNotesInHalfSteps, pitch1);
 		int indexPitch2 = Array.IndexOf(allNotesInHalfSteps, pitch2);
 
-		Debug.Log($"pitch1 = {pitch1}, index = {indexPitch1}");
-		Debug.Log($"pitch2 = {pitch2}, index = {indexPitch2}");
 
 		if (indexPitch1 < (indexPitch2)) {
 			numHalfSteps = indexPitch2 - indexPitch1;
@@ -57,7 +55,6 @@ public class noteList : MonoBehaviour
 		{
 			return "same note";
 		}
-		Debug.Log(numHalfSteps.ToString());
 
 		switch (numHalfSteps)
 		{

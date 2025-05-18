@@ -50,9 +50,7 @@ public class setUpQuestions : MonoBehaviour
 
             //yes i know this is goofy it basically gets the interval between two notes :P
             string interval = noteList.GetInterval(noteSpawner.notesToRender[player.GetCurrentNoteIndex()].GetComponent<noteScript>().GetPitch(), noteSpawner.notesToRender[player.GetNextNoteIndex(player.GetCurrentNoteIndex())].GetComponent<noteScript>().GetPitch());
-            Debug.Log(interval + "is the interval");
-            int correctBox = UnityEngine.Random.Range(1, 3);
-
+            int correctBox = UnityEngine.Random.Range(1, 2);
 
 			//set a random key to tbe the right answer and link it with the right box, show the boxes
 			if (correctBox == 1)
@@ -97,7 +95,6 @@ public class setUpQuestions : MonoBehaviour
             string nextPitch = noteSpawner.notesToRender[player.GetNextNoteIndex(player.GetCurrentNoteIndex())].GetComponent<noteScript>().GetPitch();
 
             string nextNote = nextPitch.Remove(1, 1);
-            Debug.Log(nextNote + " is the next note");
 
             
 
@@ -113,5 +110,13 @@ public class setUpQuestions : MonoBehaviour
 
             return returnList;
         }
+    }
+    public void ResetText()
+    {
+        textsBox1[0] = null;
+        textsBox1[1] = null ;
+
+        textsBox2[0] = null;
+        textsBox2[1] = null ;
     }
 }

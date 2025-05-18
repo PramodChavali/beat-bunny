@@ -145,10 +145,14 @@ MonoBehaviour:
   type: 
   visual: {fileID: 6139562873666232643}
   noteSpawner: {fileID: 0}
-  startPoint: {fileID: 6677274366669091728}
+  metronome: {fileID: 0}
+  startPoint: {fileID: 2192774781243850789}
   endPoint: {fileID: 2192774781243850789}
   playerPoint: {fileID: 5340297849993521690}
   indexInList: 0
+  pitch: 
+  moveSpeed: 0
+  speedCalculated: 0
 --- !u!61 &4361911614250140771
 BoxCollider2D:
   m_ObjectHideFlags: 0

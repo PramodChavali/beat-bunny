@@ -16,6 +16,8 @@ public class noteScript : MonoBehaviour
     [SerializeField] private float moveSpeed;
     [SerializeField] private bool speedCalculated;
 
+    private bool hidden;
+
  //   public void AssignReference(playMetronome metronome, string objName)
  //   {
  //       metronome = GameObject.Find(objName).GetComponent<playMetronome>();
@@ -49,10 +51,12 @@ public class noteScript : MonoBehaviour
     public void ShowNoteVisual()
     {
         visual.SetActive(true);
+        hidden = false;
     }
     public void HideNoteVisual()
     {
         visual.SetActive(false);
+        hidden = true;
     }
     public void SetNoteType(string input)
     {
@@ -123,8 +127,12 @@ public class noteScript : MonoBehaviour
         float distance = transform.position.x - (-8f);
         float totalTime = GetNoteDuration(type) * secondsPerBeat;
         float moveSpeed = distance / totalTime;
-        //Debug.Log(moveSpeed.ToString());
         return moveSpeed;
         
+    }
+
+    public bool IsVisualHidden()
+    {
+        return hidden;
     }
 }

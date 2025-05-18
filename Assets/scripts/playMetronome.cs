@@ -22,7 +22,6 @@ public class playMetronome : MonoBehaviour
 		secondsPerBeat = 60f / BPM;
 		eighthNoteSpeed = 60f / BPM / 2f;
 		
-		Debug.Log("Frequency is " + secondsPerBeat.ToString());
 		timer = eighthNoteSpeed;
 
 		
@@ -35,11 +34,10 @@ public class playMetronome : MonoBehaviour
 		timer -= Time.deltaTime;
 		if (timer <= 0f)
 		{
-			if (beatInBar == 1f || beatInBar == 2f || beatInBar == 3f || beatInBar == 4f || beatInBar == 5f)
-			{
-				metrenomeClick.Play();
-			}
-			beatInBar += 0.5f;
+			
+			metrenomeClick.Play();
+			
+			beatInBar += 1f;
 			timer = secondsPerBeat;
 			if (beatInBar == 6f)
 			{
